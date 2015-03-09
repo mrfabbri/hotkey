@@ -94,7 +94,7 @@ function HotKey(letter, modifiers) {
   // TODO maybe the letter + modifier logic is better handled native side
 
   var hotkey = new HotKeyNative(getIntValueForLetter(letter), getIntValueForModifiers(modifiers));
-  hotkey.setCallback(emitter.emit);
+  hotkey.setCallback(function (event) { emitter.emit(event); });
 }
 util.inherits(HotKey, EventEmitter);
 

@@ -63,7 +63,7 @@ void HotKey::InstallGlobalHotKey() {
       return;
     }
 
-    hotKeyID.id = HotKey::count++;
+    hotKeyID.id = 0;//HotKey::count++;
     // TODO proper OSType from HotKey::count
     hotKeyID.signature = 'hkey';
     this->hotKeyID = hotKeyID;
@@ -86,7 +86,7 @@ void HotKey::Init(Handle<Object> exports) {
   tpl->InstanceTemplate()->SetInternalFieldCount(2);
 
   // Prototype
-  NODE_SET_PROTOTYPE_METHOD(tpl, "setListener", SetCallback);
+  NODE_SET_PROTOTYPE_METHOD(tpl, "setCallback", SetCallback);
 
   NanAssignPersistent(constructor, tpl->GetFunction());
   exports->Set(NanNew("HotKey"), tpl->GetFunction());
