@@ -98,10 +98,4 @@ function HotKey(letter, modifiers) {
 }
 util.inherits(HotKey, EventEmitter);
 
-var mikeyListener = function mikeyListener(usageCode) {
-  var keyEvent = keyEvents[usageCode];
-  emitter.emit(keyEvent) || mikey.sendBackKeyEvent(usageCode);
-}
-mikey.setListener(mikeyListener);
-
 module.exports = HotKey;
