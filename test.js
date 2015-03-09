@@ -2,11 +2,11 @@ var HotKey = require('./index');
 
 var hotkey = new HotKey("E", "cmd+shift");
 
-hotkey.on('hotkeyDown', function () {
+hotkey.on('hotkeyPressed', function () {
     console.log('global hotkey pressed');
 });
 
-hotkey.on('hotkeyUp', function () {
+hotkey.on('hotkeyReleased', function () {
     console.log('global hotkey released');
 });
 

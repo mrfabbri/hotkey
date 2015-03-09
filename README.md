@@ -12,7 +12,7 @@ var HotKey = require('hotkey');
  
 var myHotkey = new HotKey('R', 'cmd+shift');
 
-myHotkey.on('hotkeyDown', function hotKeyPressed() {
+myHotkey.on('hotkeyPressed', function hotKeyPressed() {
     // do something...
 });
 ````

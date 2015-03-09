@@ -7,14 +7,14 @@
  * ````JavaScript
  * var HotKey = require('hotkey');
  * var myHotkey = new HotKey('R', 'cmd+shift');
- * myHotkey.on('hotkeyDown', function hotKeyPressed() {
+ * myHotkey.on('hotkeyPressed', function hotKeyPressed() {
  *     // do something...
  * });
  * ````
  *
  * Events:
- * `"hotkeyDown"` - triggered when keyboard shortcut is pressed
- * `"hotkeyUp"` - triggered when keyboard shortcut is released
+ * `"hotKeyPressed"` - triggered when keyboard shortcut is pressed
+ * `"hotKeyReleased"` - triggered when keyboard shortcut is released
  * 
  */
 
