@@ -8,64 +8,64 @@ Persistent<Function> HotKey::constructor;
 static uint count;
 
 OSStatus HotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void *userData) {
-    NanScope();
-    EventHotKeyID hotKeyID;
-    HotKey *hotkey = (HotKey *)userData;
+  NanScope();
+  EventHotKeyID hotKeyID;
+  HotKey *hotkey = (HotKey *)userData;
 
-    GetEventParameter(anEvent, kEventParamDirectObject, typeEventHotKeyID, NULL, sizeof(hotKeyID), NULL, &hotKeyID);
-    if (hotkey->callback && hotkey->hotKeyID.id == hotKeyID.id) {
-      Local<Value> argv[1];
-      switch (GetEventKind(anEvent)) {
-        case kEventHotKeyPressed:
-          argv[0] = NanNew<String>("hotkeyPressed");
-          hotkey->callback->Call(1, argv);
-        break;
-        case kEventHotKeyReleased:
-          argv[0] = NanNew<String>("hotkeyReleased");
-          hotkey->callback->Call(1, argv);
-        break;
-      }
+  GetEventParameter(anEvent, kEventParamDirectObject, typeEventHotKeyID, NULL, sizeof(hotKeyID), NULL, &hotKeyID);
+  if (hotkey->callback && hotkey->hotKeyID.id == hotKeyID.id) {
+    Local<Value> argv[1];
+    switch (GetEventKind(anEvent)) {
+      case kEventHotKeyPressed:
+        argv[0] = NanNew<String>("hotkeyPressed");
+        hotkey->callback->Call(1, argv);
+      break;
+      case kEventHotKeyReleased:
+        argv[0] = NanNew<String>("hotkeyReleased");
+        hotkey->callback->Call(1, argv);
+      break;
     }
+  }
 
-    return noErr;
+  return noErr;
 }
 
 void InstallGlobalHotKey(int keycode, int modifiers, HotKey *hotkey) {
-    EventHotKeyRef hotKeyRef;
-    EventHotKeyID hotKeyID;
-    EventTypeSpec eventTypes[2];
-    OSStatus err;
+  EventHotKeyRef hotKeyRef;
+  EventHotKeyID hotKeyID;
+  EventTypeSpec eventTypes[2];
+  OSStatus err;
 
-    eventTypes[0].eventClass = kEventClassKeyboard;
-    eventTypes[0].eventKind = kEventHotKeyPressed;
+  eventTypes[0].eventClass = kEventClassKeyboard;
+  eventTypes[0].eventKind = kEventHotKeyPressed;
 
-    eventTypes[1].eventClass = kEventClassKeyboard;
-    eventTypes[1].eventKind = kEventHotKeyReleased;
+  eventTypes[1].eventClass = kEventClassKeyboard;
+  eventTypes[1].eventKind = kEventHotKeyReleased;
 
-    err = InstallApplicationEventHandler(&HotKeyHandler, 2, eventTypes, hotkey, NULL);
+  err = InstallApplicationEventHandler(&HotKeyHandler, 2, eventTypes, hotkey, NULL);
 
-    if (err) {
-      fprintf(stderr, "%s failed to install application event handler: %s\n", __PRETTY_FUNCTION__, GetMacOSStatusErrorString(err));
+  if (err) {
+    fprintf(stderr, "%s failed to install application event handler: %s\n", __PRETTY_FUNCTION__, GetMacOSStatusErrorString(err));
       // TODO kInstallApplicationEventHandlerFailed
-      return;
-    }
+    return;
+  }
 
-    hotKeyID.id = count++;
-    hotKeyID.signature = 'hkey';
-    hotkey->hotKeyID = hotKeyID;
+  hotKeyID.id = count++;
+  hotKeyID.signature = 'hkey';
+  hotkey->hotKeyID = hotKeyID;
 
-    err = RegisterEventHotKey(keycode, modifiers, hotKeyID, GetApplicationEventTarget(), 0, &hotKeyRef);
+  err = RegisterEventHotKey(keycode, modifiers, hotKeyID, GetApplicationEventTarget(), 0, &hotKeyRef);
     // err = RegisterEventHotKey(kVK_ANSI_L, cmdKey, hotKeyID, GetApplicationEventTarget(), 0, &hotKeyRef);
-    if (err) {
-      fprintf(stderr, "%s failed to register event hotkey: %s\n", __PRETTY_FUNCTION__, GetMacOSStatusErrorString(err));
+  if (err) {
+    fprintf(stderr, "%s failed to register event hotkey: %s\n", __PRETTY_FUNCTION__, GetMacOSStatusErrorString(err));
       // TODO kRegisterEventHotKeyFailed
-      return;
-    }
-    hotkey->hotKeyRef = hotKeyRef;
+    return;
+  }
+  hotkey->hotKeyRef = hotKeyRef;
 }
 
 HotKey::HotKey(int keycode, int modifiers) :  keycode_(keycode),
-                                              modifiers_(modifiers) {
+modifiers_(modifiers) {
   InstallGlobalHotKey(keycode, modifiers, this);
 }
 
@@ -74,6 +74,7 @@ HotKey::~HotKey() {
     delete callback;
   }
 
+  // TODO move unregister to separate member function
   UnregisterEventHotKey(hotKeyRef);
 
   // TODO EventHotKeyID hotKeyID; EventHotKeyRef hotKeyRef;

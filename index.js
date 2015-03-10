@@ -1,4 +1,4 @@
-/**
+/*
  * Hotkey module.
  *
  * An EventMitter for Global Hotkeys.
@@ -85,9 +85,7 @@ function getIntValueForLetter(letter) {
   }[letter.toUpperCase()[0]] || 0;
 }
 
-/* 
- * TODO DOC
- */
+// TODO DOC
 function HotKey(letter, modifiers) {
   if (typeof letter === "undefined" || typeof modifiers === "undefined") {
     throw new Error("letter and modifiers arguments are required");
