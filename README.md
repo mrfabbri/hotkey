@@ -4,6 +4,7 @@ HotKey is a simple Node.js module for registering global hotkeys (currently on O
 
 HotKey exposes an `EventEmitter` API (for `hotkeyDown`, `hotkeyUp` events).
 
+NOTE: you have to specify at least a modifier for the hotkey to be effective.
 
 ## Example usage:
 
