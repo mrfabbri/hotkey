@@ -95,7 +95,6 @@ var hotkeys = {};
  * @param {Object} options
  */
 function HotKey(options) {
-  var hotkeyID;
   var key = options.key;
   var modifiers = options.modifiers;
   var failedCb;
@@ -112,17 +111,31 @@ function HotKey(options) {
   // TODO maybe the key + modifier logic is better handled native side
 
   try {
-    hotkeyID = hotkeyManager.registerHotkey(getANSIVKForLetter(key), getVKMaskForModifiers(modifiers));
+    this.id = hotkeyManager.registerHotkey(getANSIVKForLetter(key), getVKMaskForModifiers(modifiers));
   } catch (err) {
     if (failedCb) { failedCb(err); }
     console.error(err.message);
   }
-  hotkeys[hotkeyID] = this;
+  hotkeys[this.id] = this;
 }
+
 util.inherits(HotKey, EventEmitter);
+
 HotKey.prototype.getKey = function getKey() { return this.key; }
+
 HotKey.prototype.getModifiers = function getModifiers() { return this.modifiers; }
-HotKey.prototype.toString = function toString() { return this.key + this.modifiers; }
+
+HotKey.prototype.toString = function toString() { return "[HotKey]" + this.key + "+" + this.modifiers; }
+
+HotKey.prototype.unregister = function unregister() {
+  try {
+    hotkeyManager.unregisterHotkey(this.id);
+    return true;
+  } catch (err) {
+    console.error(err);
+    return false;
+  }
+}
 
 
 hotkeyManager.setCallback(function (event, hotkeyID) {

@@ -5,6 +5,7 @@
 #include <node_object_wrap.h>
 #include <nan.h>
 #include <Carbon/Carbon.h>
+#include <map>
 
 namespace hotkey {
 
@@ -14,6 +15,8 @@ namespace hotkey {
   // listener callback reference 
   static NanCallback *callback;
 
+  // hotkeys map
+  std::map<UInt32, EventHotKeyRef> hotKeysMap;
 
   static void InitAll(v8::Handle<v8::Object> exports);
 

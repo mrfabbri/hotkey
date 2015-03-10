@@ -95,7 +95,7 @@ namespace hotkey {
       NanThrowError("Failed to register event hotkey");
     }
 
-    // TODO store hotKeyRef in map with hotKeyID.id
+    hotKeysMap[hotKeyID.id] = hotKeyRef;
 
     NanReturnValue(NanNew<Number>(hotKeyID.id));
   }
@@ -103,10 +103,21 @@ namespace hotkey {
   NAN_METHOD(UnregisterHotKey) {
     NanScope();
 
-    // TODO
-    // get the hotkey from the map
-    // unregister
-    // destroy
+    UInt32 hotKeyID;
+    EventHotKeyRef hotKeyRef;
+
+    if (!args[0]->IsInt32()) {
+      NanThrowError("First argument of unregisterHotkey must be an integer");
+    }
+    hotKeyID = args[0]->Uint32Value();
+
+    if (hotKeysMap.count(hotKeyID) <= 0) {
+      fprintf(stderr, "%s %u\n", __PRETTY_FUNCTION__, hotKeyID);
+      NanThrowError("No registered hotkey found for the given id");
+    }
+    hotKeyRef = hotKeysMap[hotKeyID];
+    UnregisterEventHotKey(hotKeyRef);
+    hotKeysMap.erase(hotKeyID);
 
     NanReturnUndefined();
   }
