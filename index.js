@@ -24,7 +24,7 @@ var HotKeyNative = require('bindings')('hotkey').HotKey;
 var EventEmitter = require("events").EventEmitter;
 var util = require('util');
 
-function getIntValueForModifiers(modifiers) {
+function getVKMaskForModifiers(modifiers) {
   var result = 0; // 0 means no modifiers
 
   var bitMask = {
@@ -44,7 +44,7 @@ function getIntValueForModifiers(modifiers) {
 }
 
 // TODO proper error handling
-function getIntValueForLetter(letter) {
+function getANSIVKForLetter(letter) {
   return {
     "A" : 0x00,
     "S" : 0x01,
@@ -93,7 +93,7 @@ function HotKey(letter, modifiers) {
 
   // TODO maybe the letter + modifier logic is better handled native side
 
-  var hotkey = new HotKeyNative(getIntValueForLetter(letter), getIntValueForModifiers(modifiers));
+  var hotkey = new HotKeyNative(getANSIVKForLetter(letter), getVKMaskForModifiers(modifiers));
   var self = this;
   hotkey.setCallback(function (event) { self.emit(event); });
 }
