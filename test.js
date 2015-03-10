@@ -10,6 +10,7 @@ hotkey.on('hotkeyReleased', function () {
     console.log('global hotkey released');
 });
 
-setTimeout(function () {
-    console.log('You have 10 seconds to press E+cmd+shift ');
-}, 10*1000);
+// TODO GetApplicationEventTarget() does not work properly in plain node (command line)
+
+console.log('You have 10 seconds to press E+cmd+shift ');
+setTimeout(function () {;}, 10*1000);
