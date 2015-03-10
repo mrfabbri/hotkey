@@ -20,7 +20,7 @@
 
 "use strict";
 
-var HotKeyNative = require('bindings')('hotkey').HotKey;
+var hotkeyManager = require('bindings')('globalHotkeyManager');
 var EventEmitter = require("events").EventEmitter;
 var util = require('util');
 
@@ -85,18 +85,41 @@ function getANSIVKForLetter(letter) {
   }[letter.toUpperCase()[0]] || 0;
 }
 
+var hotkeys = {};
+
 // TODO DOC
 function HotKey(letter, modifiers) {
+  var hotkeyID;
+  var _letter;
+  var _modifiers;
+
+  _letter = letter;
+  _modifiers = modifiers;
+
+  this._letter = letter;
+  this._modifier = modifiers;
+
   if (typeof letter === "undefined" || typeof modifiers === "undefined") {
     throw new Error("letter and modifiers arguments are required");
   }
 
   // TODO maybe the letter + modifier logic is better handled native side
 
-  var hotkey = new HotKeyNative(getANSIVKForLetter(letter), getVKMaskForModifiers(modifiers));
-  var self = this;
-  hotkey.setCallback(function (event) { self.emit(event); });
+  hotkeyID = hotkeyManager.registerHotkey(getANSIVKForLetter(letter), getVKMaskForModifiers(modifiers));
+  hotkeys[hotkeyID] = this;
 }
 util.inherits(HotKey, EventEmitter);
+HotKey.prototype.getLetter = function getLetter() { return this._letter; }
+HotKey.prototype.getModifiers = function getModifiers() { return this._modifiers; }
+HotKey.prototype.toString = function toString() { return this.letter + this._modifiers; }
+
+
+hotkeyManager.setCallback(function (event, hotkeyID) {
+  if (!hotkeys[hotkeyID]) {
+    console.error("%d hotkeyID for global hotkey event %s not found", hotkeyID, event);
+    return;
+  }
+  hotkeys[hotkeyID].emit(event);
+});
 
 module.exports = HotKey;

@@ -1,10 +1,9 @@
 {
   "targets": [
     {
-      "target_name": "hotkey",
+      "target_name": "globalHotkeyManager",
       "sources": [
-        "addon.c",
-        "hotkey.cc"
+        "global_hotkey_manager.cc"
       ],
       "include_dirs": [ 
         "<!(node -e \"require('nan')\")",
