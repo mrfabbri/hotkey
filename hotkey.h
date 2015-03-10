@@ -10,8 +10,6 @@ class HotKey : public node::ObjectWrap {
  public:
   static void Init(v8::Handle<v8::Object> exports);
 
-  static uint count;
-
   int keycode_;
   int modifiers_;
   NanCallback *callback;
@@ -21,9 +19,6 @@ class HotKey : public node::ObjectWrap {
  private:
   explicit HotKey(int keyCode = 0, int modifiers = 0);
   ~HotKey();
-
-  // OSStatus HotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void *userData);
-  void InstallGlobalHotKey(void);
 
 
   static NAN_METHOD(New);

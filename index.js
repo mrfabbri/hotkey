@@ -39,6 +39,8 @@ function getIntValueForModifiers(modifiers) {
       result |= bitMask[modifier];
     }
   }
+
+  return result;
 }
 
 // TODO proper error handling
@@ -94,7 +96,8 @@ function HotKey(letter, modifiers) {
   // TODO maybe the letter + modifier logic is better handled native side
 
   var hotkey = new HotKeyNative(getIntValueForLetter(letter), getIntValueForModifiers(modifiers));
-  hotkey.setCallback(function (event) { emitter.emit(event); });
+  var self = this;
+  hotkey.setCallback(function (event) { self.emit(event); });
 }
 util.inherits(HotKey, EventEmitter);
 

@@ -4,37 +4,24 @@ using namespace v8;
 
 Persistent<Function> HotKey::constructor;
 
-HotKey::HotKey(int keycode, int modifiers) :  keycode_(keycode),
-                                              modifiers_(modifiers) {
-  InstallGlobalHotKey();
-}
-
-HotKey::~HotKey() {
-  if (callback) {
-    delete callback;
-  }
-
-  UnregisterEventHotKey(hotKeyRef);
-
-  // TODO EventHotKeyID hotKeyID; EventHotKeyRef hotKeyRef;
-}
+// counter for EventHotKeyID.id;
+static uint count;
 
 OSStatus HotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void *userData) {
+    NanScope();
     EventHotKeyID hotKeyID;
     HotKey *hotkey = (HotKey *)userData;
 
-    fprintf(stderr, "A GLOBAL HOTKEY\n");
-    
     GetEventParameter(anEvent, kEventParamDirectObject, typeEventHotKeyID, NULL, sizeof(hotKeyID), NULL, &hotKeyID);
     if (hotkey->callback && hotkey->hotKeyID.id == hotKeyID.id) {
       Local<Value> argv[1];
       switch (GetEventKind(anEvent)) {
         case kEventHotKeyPressed:
-          argv[0] = NanNew<String>("hotKeyPressed");
+          argv[0] = NanNew<String>("hotkeyPressed");
           hotkey->callback->Call(1, argv);
         break;
         case kEventHotKeyReleased:
-          argv[0] = NanNew<String>("hotKeyReleased");
+          argv[0] = NanNew<String>("hotkeyReleased");
           hotkey->callback->Call(1, argv);
         break;
       }
@@ -43,7 +30,7 @@ OSStatus HotKeyHandler(EventHandlerCallRef nextHandler, EventRef anEvent, void *
     return noErr;
 }
 
-void HotKey::InstallGlobalHotKey() {
+void InstallGlobalHotKey(int keycode, int modifiers, HotKey *hotkey) {
     EventHotKeyRef hotKeyRef;
     EventHotKeyID hotKeyID;
     EventTypeSpec eventTypes[2];
@@ -55,7 +42,7 @@ void HotKey::InstallGlobalHotKey() {
     eventTypes[1].eventClass = kEventClassKeyboard;
     eventTypes[1].eventKind = kEventHotKeyReleased;
 
-    err = InstallApplicationEventHandler(&HotKeyHandler, 2, eventTypes, this, NULL);
+    err = InstallApplicationEventHandler(&HotKeyHandler, 2, eventTypes, hotkey, NULL);
 
     if (err) {
       fprintf(stderr, "%s failed to install application event handler: %s\n", __PRETTY_FUNCTION__, GetMacOSStatusErrorString(err));
@@ -63,18 +50,33 @@ void HotKey::InstallGlobalHotKey() {
       return;
     }
 
-    hotKeyID.id = 0;//HotKey::count++;
-    // TODO proper OSType from HotKey::count
+    hotKeyID.id = count++;
     hotKeyID.signature = 'hkey';
-    this->hotKeyID = hotKeyID;
+    hotkey->hotKeyID = hotKeyID;
 
-    err = RegisterEventHotKey(kVK_ANSI_R, cmdKey + optionKey, hotKeyID, GetApplicationEventTarget(), 0, &hotKeyRef);
+    err = RegisterEventHotKey(keycode, modifiers, hotKeyID, GetApplicationEventTarget(), 0, &hotKeyRef);
+    // err = RegisterEventHotKey(kVK_ANSI_L, cmdKey, hotKeyID, GetApplicationEventTarget(), 0, &hotKeyRef);
     if (err) {
       fprintf(stderr, "%s failed to register event hotkey: %s\n", __PRETTY_FUNCTION__, GetMacOSStatusErrorString(err));
       // TODO kRegisterEventHotKeyFailed
       return;
     }
-    this->hotKeyRef = hotKeyRef;
+    hotkey->hotKeyRef = hotKeyRef;
+}
+
+HotKey::HotKey(int keycode, int modifiers) :  keycode_(keycode),
+                                              modifiers_(modifiers) {
+  InstallGlobalHotKey(keycode, modifiers, this);
+}
+
+HotKey::~HotKey() {
+  if (callback) {
+    delete callback;
+  }
+
+  UnregisterEventHotKey(hotKeyRef);
+
+  // TODO EventHotKeyID hotKeyID; EventHotKeyRef hotKeyRef;
 }
 
 void HotKey::Init(Handle<Object> exports) {
