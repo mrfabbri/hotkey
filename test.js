@@ -5,9 +5,10 @@ var HotKey = require('./index');
 describe('HotKey', function () {
   var hotkey;
 
-  beforeEach();
-
-  afterEach();
+  afterEach(function (done) {
+    hotkey.unregister();
+    done();
+  });
 
   describe('#new', function () {
 
@@ -39,7 +40,10 @@ describe('HotKey', function () {
   describe('#unregister', function () {
 
     it('should unregister an hotkey and register again', function (done) {
+      hotkey = new HotKey({ key: "E", modifiers: "cmd+shift", failed: done });
+
       hotkey.unregister();
+
       hotkey = new HotKey({ key: "E", modifiers: "cmd+shift", failed: done });
 
       hotkey.should.be.a('HotKey');
