@@ -4,7 +4,7 @@
   "description": "An EventMitter for Global Hotkeys.",
   "main": "index.js",
   "scripts": {
-    "test": "node test.js"
+    "test": "mocha test.js"
   },
   "os": [
     "darwin"
@@ -30,9 +30,15 @@
   "author": "Marco Fabbri <mrfabbri@gmail.com> (http://mrfabbri.org)",
   "contributors": [],
   "license": "MIT",
-  "engines": { "node" : ">=0.10.0" },
+  "engines": {
+    "node": ">=0.10.0"
+  },
   "dependencies": {
     "bindings": "^1.2.1",
     "nan": "~1.5.3"
+  },
+  "devDependencies": {
+    "chai": "^2.1.1",
+    "mocha": "^2.2.1"
   }
 }

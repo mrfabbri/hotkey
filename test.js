@@ -1,16 +1,52 @@
+
+var should = require("chai").should();
 var HotKey = require('./index');
 
-var hotkey = new HotKey("E", "cmd+shift");
+describe('HotKey', function () {
+  var hotkey;
 
-hotkey.on('hotkeyPressed', function () {
-    console.log('global hotkey pressed');
+  beforeEach();
+
+  afterEach();
+
+  describe('#new', function () {
+
+    it('should create and register a new hotkey', function (done) {
+      hotkey = new HotKey({ key: "E", modifiers: "cmd+shift", failed: done });
+
+      hotkey.should.be.a('HotKey');
+      hotkey.getKey().should.equal('E');
+      hotkey.getModifiers().should.equal('cmd+shift');
+
+      hotkey.on('hotkeyPressed', function () {
+        console.log('global hotkey pressed');
+      });
+
+      hotkey.on('hotkeyReleased', function () {
+        console.log('global hotkey released');
+      });
+
+      done();
+    });
+
+    it('should fail to register the same hotkey twice', function (done) {
+      var sameHotkey = new HotKey({key: "E", modifiers: "cmd+shift", failed: function (err) {
+        done();
+      }});
+    });
+  });
+
+  describe('#unregister', function () {
+
+    it('should unregister an hotkey and register again', function (done) {
+      hotkey.unregister();
+      hotkey = new HotKey({ key: "E", modifiers: "cmd+shift", failed: done });
+
+      hotkey.should.be.a('HotKey');
+      hotkey.getKey().should.equal('E');
+      hotkey.getModifiers().should.equal('cmd+shift');
+
+      done();
+    });
+  });
 });
-
-hotkey.on('hotkeyReleased', function () {
-    console.log('global hotkey released');
-});
-
-// TODO GetApplicationEventTarget() does not work properly in plain node (command line)
-
-console.log('You have 10 seconds to press E+cmd+shift ');
-setTimeout(function () {;}, 10*1000);
