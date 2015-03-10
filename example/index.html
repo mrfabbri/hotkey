@@ -1,0 +1,13 @@
+<html>
+  <head>
+    <script>
+      var HotKey = require("../index");
+
+      var hotkey = new HotKey('L', 'cmd');
+      hotkey.on("hotkeyReleased", function () { console.error("hotkeyReleased");  });
+      hotkey.on("hotkeyPressed",  function () { console.error("hotkeyPressed");   });
+    </script>
+  <body>
+    <p>Hotkey example app</p>
+  </body>
+</html>
