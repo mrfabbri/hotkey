@@ -3,11 +3,11 @@
     <script>
       var HotKey = require("../index");
 
-      var hotkey = new HotKey('L', 'cmd');
+      var hotkey = new HotKey({key: 'L', modifiers: 'cmd'});
       hotkey.on("hotkeyReleased", function () { console.log("cmd+L hotkeyReleased");  });
       hotkey.on("hotkeyPressed",  function () { console.log("cmd+L hotkeyPressed");   });
 
-      var anotherHotkey = new HotKey('L', 'cmd+shift');
+      var anotherHotkey = new HotKey({key: 'L', modifiers: 'cmd+shift'});
       anotherHotkey.on("hotkeyReleased", function () { console.log("cmd+shift+L hotkeyReleased ");  });
       anotherHotkey.on("hotkeyPressed",  function () { console.log("cmd+shift+L hotkeyPressed ");   });
     </script>

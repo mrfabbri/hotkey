@@ -43,8 +43,8 @@ function getVKMaskForModifiers(modifiers) {
   return result;
 }
 
-// TODO proper error handling
-function getANSIVKForLetter(letter) {
+// TODO DOC
+function getANSIVKForLetter(key) {
   return {
     "A" : 0x00,
     "S" : 0x01,
@@ -82,36 +82,47 @@ function getANSIVKForLetter(letter) {
     "K" : 0x28,
     "N" : 0x2D,
     "M" : 0x2E
-  }[letter.toUpperCase()[0]] || 0;
+  }[key.toUpperCase()];
 }
 
 var hotkeys = {};
 
-// TODO DOC
-function HotKey(letter, modifiers) {
+/**
+ * A global hotkey.
+ * `key` and `modifiers` options are mandatory, while `failed` callback is optional.
+ *
+ * @constructor
+ * @param {Object} options
+ */
+function HotKey(options) {
   var hotkeyID;
-  var _letter;
-  var _modifiers;
+  var key = options.key;
+  var modifiers = options.modifiers;
+  var failedCb;
 
-  _letter = letter;
-  _modifiers = modifiers;
-
-  this._letter = letter;
-  this._modifier = modifiers;
-
-  if (typeof letter === "undefined" || typeof modifiers === "undefined") {
-    throw new Error("letter and modifiers arguments are required");
+  if (typeof key === "undefined" || typeof modifiers === "undefined") {
+    throw new Error("key and modifiers are both required");
   }
 
-  // TODO maybe the letter + modifier logic is better handled native side
+  failedCb = (typeof options.failed === "function") ? options.failed : undefined;
 
-  hotkeyID = hotkeyManager.registerHotkey(getANSIVKForLetter(letter), getVKMaskForModifiers(modifiers));
+  this.key = key;
+  this.modifiers = modifiers;
+
+  // TODO maybe the key + modifier logic is better handled native side
+
+  try {
+    hotkeyID = hotkeyManager.registerHotkey(getANSIVKForLetter(key), getVKMaskForModifiers(modifiers));
+  } catch (err) {
+    if (failedCb) { failedCb(err); }
+    console.error(err.message);
+  }
   hotkeys[hotkeyID] = this;
 }
 util.inherits(HotKey, EventEmitter);
-HotKey.prototype.getLetter = function getLetter() { return this._letter; }
+HotKey.prototype.getLetter = function getLetter() { return this._key; }
 HotKey.prototype.getModifiers = function getModifiers() { return this._modifiers; }
-HotKey.prototype.toString = function toString() { return this.letter + this._modifiers; }
+HotKey.prototype.toString = function toString() { return this.key + this._modifiers; }
 
 
 hotkeyManager.setCallback(function (event, hotkeyID) {
