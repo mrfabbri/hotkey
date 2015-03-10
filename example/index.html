@@ -4,10 +4,12 @@
       var HotKey = require("../index");
 
       var hotkey = new HotKey('L', 'cmd');
-      hotkey.on("hotkeyReleased", function () { console.error("hotkeyReleased");  });
-      hotkey.on("hotkeyPressed",  function () { console.error("hotkeyPressed");   });
+      hotkey.on("hotkeyReleased", function () { console.log("hotkeyReleased");  });
+      hotkey.on("hotkeyPressed",  function () { console.log("hotkeyPressed");   });
     </script>
   <body>
-    <p>Hotkey example app</p>
+    <h4>Hotkey example app</h4>
+    <p>Press <code>cmd+L</code> to activate the hotkey</p>
+    <p>Log of the hotkey in devtools</p>
   </body>
 </html>

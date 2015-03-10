@@ -2,4 +2,8 @@
   "name": "hotkey-example",
   "version": "0.0.1",
   "main": "index.html",
+  "window": {
+    "width": 300,
+    "height": 200
+  }
 }
