@@ -30,22 +30,38 @@ describe('HotKey', function () {
       done();
     });
 
-    // TODO fix test
-    // it('should fail to register the same hotkey twice', function (done) {
-    //   hotKey = new HotKey({ key: "E", modifiers: "cmd+shift" });
-    //   var sameHotkey = new HotKey({
-    //       key: "E",
-    //       modifiers: "cmd+shift",
-    //       failed: function (err) {
-    //         done();
-    //       }
-    //     });
-    // });
+    it('should register different hotkeys', function () {
+      hotkey = new HotKey({ key: "E", modifiers: "cmd+shift" });
+      hotkey.should.be.a('object');
+      hotkey.getKey().should.equal('E');
+      hotkey.getModifiers().should.equal('cmd+shift');
+
+      var hotkey2 = new HotKey({ key: "E", modifiers: "cmd" });
+      hotkey2.should.be.a('object');
+      hotkey2.getKey().should.equal('E');
+      hotkey2.getModifiers().should.equal('cmd');
+
+      var hotkey3 = new HotKey({ key: "L", modifiers: "option" });
+      hotkey3.should.be.a('object');
+      hotkey3.getKey().should.equal('L');
+      hotkey3.getModifiers().should.equal('option');
+    });
+
+    it('should fail to register the same hotkey twice', function (done) {
+      hotkey = new HotKey({ key: "E", modifiers: "cmd+shift" });
+      var sameHotkey = new HotKey({
+          key: "E",
+          modifiers: "cmd+shift",
+          failed: function (err) {
+            done();
+          }
+        });
+    });
   });
 
-  describe('#unregister', function () {
+  describe('#unregister', function (done) {
 
-    it('should unregister an hotkey and register again', function (done) {
+    it('should unregister an hotkey and register again', function () {
       hotkey = new HotKey({ key: "E", modifiers: "cmd+shift", failed: done });
 
       hotkey.unregister();
@@ -55,9 +71,23 @@ describe('HotKey', function () {
       hotkey.should.be.a('object');
       hotkey.getKey().should.equal('E');
       hotkey.getModifiers().should.equal('cmd+shift');
-
-      done();
     });
+
+    it('should let unregister an hotkey more than once', function () {
+      var res;
+
+      hotkey = new HotKey({ key: "E", modifiers: "cmd+shift", failed: done });
+
+      res = hotkey.unregister();
+      res.should.equal(true);
+
+      res = hotkey.unregister();
+      res.should.equal(false);
+
+      res = hotkey.unregister();
+      res.should.equal(false);
+    });
+
   });
 });
 
