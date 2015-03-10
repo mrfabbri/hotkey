@@ -91,8 +91,7 @@ namespace hotkey {
 
     err = RegisterEventHotKey(keycode, modifiers, hotKeyID, GetApplicationEventTarget(), 0, &hotKeyRef);
     if (err) {
-      fprintf(stderr, "%s failed to register event hotkey: %s\n", __PRETTY_FUNCTION__, GetMacOSStatusErrorString(err));
-        // TODO kRegisterEventHotKeyFailed
+      // TODO pass err with message
       NanThrowError("Failed to register event hotkey");
     }
 
