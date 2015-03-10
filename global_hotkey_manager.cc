@@ -112,7 +112,6 @@ namespace hotkey {
     hotKeyID = args[0]->Uint32Value();
 
     if (hotKeysMap.count(hotKeyID) <= 0) {
-      fprintf(stderr, "%s %u\n", __PRETTY_FUNCTION__, hotKeyID);
       NanThrowError("No registered hotkey found for the given id");
     }
     hotKeyRef = hotKeysMap[hotKeyID];

@@ -112,11 +112,10 @@ function HotKey(options) {
 
   try {
     this.id = hotkeyManager.registerHotkey(getANSIVKForLetter(key), getVKMaskForModifiers(modifiers));
+    hotkeys[this.id] = this;
   } catch (err) {
     if (failedCb) { failedCb(err); }
-    console.error(err.message);
   }
-  hotkeys[this.id] = this;
 }
 
 util.inherits(HotKey, EventEmitter);
