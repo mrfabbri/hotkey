@@ -120,13 +120,18 @@ function HotKey(options) {
 
 util.inherits(HotKey, EventEmitter);
 
+// TODO DOC
 HotKey.prototype.getKey = function getKey() { return this.key; }
 
+// TODO DOC
 HotKey.prototype.getModifiers = function getModifiers() { return this.modifiers; }
 
+// TODO DOC
 HotKey.prototype.toString = function toString() { return "[HotKey]" + this.key + "+" + this.modifiers; }
 
+// TODO DOC
 HotKey.prototype.unregister = function unregister() {
+  // TODO better error
   try {
     hotkeyManager.unregisterHotkey(this.id);
     return true;
