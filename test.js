@@ -15,7 +15,7 @@ describe('HotKey', function () {
     it('should create and register a new hotkey', function (done) {
       hotkey = new HotKey({ key: "E", modifiers: "cmd+shift", failed: done });
 
-      hotkey.should.be.a('HotKey');
+      hotkey.should.be.a('object');
       hotkey.getKey().should.equal('E');
       hotkey.getModifiers().should.equal('cmd+shift');
 

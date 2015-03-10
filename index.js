@@ -120,9 +120,9 @@ function HotKey(options) {
   hotkeys[hotkeyID] = this;
 }
 util.inherits(HotKey, EventEmitter);
-HotKey.prototype.getLetter = function getLetter() { return this._key; }
-HotKey.prototype.getModifiers = function getModifiers() { return this._modifiers; }
-HotKey.prototype.toString = function toString() { return this.key + this._modifiers; }
+HotKey.prototype.getKey = function getKey() { return this.key; }
+HotKey.prototype.getModifiers = function getModifiers() { return this.modifiers; }
+HotKey.prototype.toString = function toString() { return this.key + this.modifiers; }
 
 
 hotkeyManager.setCallback(function (event, hotkeyID) {
